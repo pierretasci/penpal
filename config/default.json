@@ -1,0 +1,12 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "mongodb": "mongodb://localhost:27017/penpal",
+  "public": "../public/",
+  "auth": {
+    "token": {
+      "secret": "n806ZjtCA+65HOte4usA5wbjiDU6aDkOfvVmmxuXGIt13lt7lgsDbimSN2dhrwgWkwWV8sHjq4QGB8ILv8rQjw=="
+    },
+    "local": {}
+  }
+}
