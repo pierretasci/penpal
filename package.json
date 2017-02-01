@@ -1,44 +1,41 @@
 {
-  "name": "penpal",
-  "description": "A database for your social connections.",
-  "version": "0.0.0",
-  "homepage": "",
-  "main": "src/",
-  "keywords": [
-    "feathers"
-  ],
-  "license": "MIT",
-  "repository": {},
-  "author": {},
-  "contributors": [],
-  "bugs": {},
-  "engines": {
-    "node": ">= 0.12.0"
-  },
+  "name": "adonis-app",
+  "version": "3.2.1",
+  "main": "server.js",
   "scripts": {
-    "test": "npm run jshint && npm run mocha",
-    "jshint": "jshint src/. test/. --config",
-    "start": "node src/",
-    "mocha": "mocha test/ --recursive"
+    "start": "echo \"\\033[31mWARN: 'start' will be depreciated soon. Instead use 'npm run serve'\" && npm run serve",
+    "dev": "echo \"\\033[31mWARN: 'dev' will be depreciated soon. Instead use 'npm run serve:dev'\" && npm run serve:dev",
+    "serve:dev": "nodemon --watch app --watch bootstrap --watch config --watch .env -x node server.js",
+    "serve": "node server.js",
+    "lint": "standard"
   },
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "private": true,
   "dependencies": {
-    "body-parser": "^1.16.0",
-    "compression": "^1.6.2",
-    "feathers": "^2.0.3",
-    "feathers-authentication": "^0.7.11",
-    "feathers-configuration": "^0.3.3",
-    "feathers-errors": "^2.5.0",
-    "feathers-hooks": "^1.7.1",
-    "feathers-mongoose": "^3.6.2",
-    "feathers-rest": "^1.6.0",
-    "mongoose": "^4.8.1",
-    "passport": "^0.3.2",
-    "serve-favicon": "^2.3.2",
-    "winston": "^2.3.1"
+    "adonis-ace": "^3.0.6",
+    "adonis-auth": "^1.0.5",
+    "adonis-commands": "^2.1.5",
+    "adonis-fold": "^3.0.3",
+    "adonis-framework": "^3.0.9",
+    "adonis-lucid": "^3.0.13",
+    "adonis-middleware": "^1.0.10",
+    "adonis-websocket": "^1.0.2",
+    "standard": "^8.6.0",
+    "youch": "^2.0.2"
+  },
+  "standard": {
+    "global": [
+      "use",
+      "make"
+    ]
+  },
+  "autoload": {
+    "App": "./app"
   },
   "devDependencies": {
-    "jshint": "^2.9.4",
-    "mocha": "^3.2.0",
-    "request": "^2.79.0"
+    "nodemon": "^1.11.0",
+    "standard": "^8.6.0"
   }
 }
