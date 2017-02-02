@@ -1,3 +1,9 @@
 # Node things
 node_modules/
 .npm-debug
+
+# Yarn
+yarn.lock
+
+# App
+custom-environment-variables.json

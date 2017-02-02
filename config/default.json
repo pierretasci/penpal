@@ -1,0 +1,13 @@
+{
+  "host": "localhost",
+  "port": 3000,
+  "https": false,
+  "mongo": "mongodb://localhost:27017/penpal",
+  "secret": "mHvR8V9Ch61Y3Pv4f4gz70GtUm8T1F1E",
+  "auth": {
+    "fb": {
+      "app_id": "FB_APP_ID",
+      "app_secret": "FB_APP_SECRET"
+    }
+  }
+}
