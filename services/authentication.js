@@ -11,7 +11,32 @@ module.exports = function(app) {
   });
   passport.deserializeUser((id, done) => {
     User.findOne({_id: id}).then((user) => {
-      done(null, user);
+      if (!user) {
+        return Promise.reject('No user');
+      }
+      // Quickly check to see if our facebook token is still valid. If we are
+      // withing 5 days of the access token expiring, then refresh it.
+      if (Date.now() >
+          new Date(user.accessTokenExpires).getTime() + 432000000) {
+        console.log('Expired access token.');
+        app.locals.FB.api('oauth/access_token', {
+          client_id: app.locals.config.get('auth.fb.app_id'),
+          client_secret: app.locals.config.get('auth.fb.app_secret'),
+          grant_type: 'fb_exchange_token',
+          fb_exchange_token: user.accessToken,
+        }, (res) => {
+          if (!res || res.error) {
+            return reject(res.error);
+          }
+          user.accessToken = res.access_token;
+          user.accessTokenExpires = Date.now() + ( res.expires * 1000 );
+          return user.save();
+        });
+      }
+      return Promise.resolve(user);
+    }).then((correctedUser) => {
+      app.locals.FB.setAccessToken(correctedUser.accessToken);
+      done(null, correctedUser);
     }).catch((err) => {
       done(err);
     });
@@ -23,24 +48,48 @@ module.exports = function(app) {
     callbackURL: '/auth/facebook/callback',
     profileFields: ['email', 'name'],
   }, (accessToken, refreshToken, profile, done) => {
-    console.log(profile);
-    const u = {
-      name: `${profile.name.givenName} ${profile.name.familyName}`,
-    };
+    // Let's immediately exchange this for a long lived token.
+    new Promise((resolve, reject) => {
+      app.locals.FB.api('oauth/access_token', {
+        client_id: app.locals.config.get('auth.fb.app_id'),
+        client_secret: app.locals.config.get('auth.fb.app_secret'),
+        grant_type: 'fb_exchange_token',
+        fb_exchange_token: accessToken
+      }, (res) => {
+        if (!res || res.error) {
+          return reject(res.error);
+        }
+        return resolve(res);
+      });
+    }).then((res) => {
+      app.locals.FB.setAccessToken(res.access_token);
+      const user = {
+        name: `${profile.name.givenName} ${profile.name.familyName}`,
+        accessToken: res.access_token,
+        accessTokenExpires: Date.now() + ( res.expires * 1000 ),
+      };
 
-    // Add the user's email.
-    if (!Array.isArray(profile.emails) || profile.emails.length === 0) {
-      console.error('Could not create user without email.');
-      return done("Could not create user without email.");
-    }
-    u.email = profile.emails[0].value;
-    console.log(u);
-    User.findOrCreate(u, (err, user) => {
-      if (err) {
-        console.error(err);
-        return done(err);
+      console.log('USER is: ');
+      console.log(user);
+
+      // Add the user's email.
+      if (!Array.isArray(profile.emails) || profile.emails.length === 0) {
+        return done("Could not create user without email.");
       }
-      return done(null, user);
-    })
+      user.email = profile.emails[0].value;
+      User.findOneAndUpdate(user.email, user,
+          { upsert: true, new: true }, (err, createdUser) => {
+        console.log('Created User: ');
+        console.log(createdUser);
+        if (err) {
+          console.error(err);
+          return done(err);
+        }
+        return done(null, createdUser);
+      });
+    }).catch((err) => {
+      console.error(err);
+      done(err);
+    });
   }));
 }

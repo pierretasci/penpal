@@ -10,8 +10,9 @@ const path = require('path');
 
 const services = require('./services');
 const models = require('./models');
-const index = require('./routes/index');
 const authentication = require('./routes/authentication');
+const index = require('./routes/index');
+const processing = require('./routes/processing');
 const users = require('./routes/users');
 
 const app = express();
@@ -39,6 +40,7 @@ app.use(passport.session());
 app.use('/', index);
 app.use('/users', users);
 app.use('/auth', authentication);
+app.use('/process', processing);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

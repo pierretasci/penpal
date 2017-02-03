@@ -2,6 +2,9 @@ extends layout
 
 block content
   h1= title
-  p Welcome #{username}!
+  p Welcome #{user.name}!
 
   a(href='/logout') Logout
+  br
+  if !user.processed
+    a(href='/process/facebook') Process Facebook Friends

@@ -3,11 +3,10 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  console.log(req.user);
   if (!req.user) {
     return res.redirect('/login');
   }
-  res.render('index', { title: 'PenPal', username: req.user.name });
+  res.render('index', { title: 'PenPal', user: req.user });
 });
 
 router.get('/login', (req, res, next) => {

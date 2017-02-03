@@ -6,8 +6,11 @@ module.exports = function(app) {
   const UserSchema = new Schema({
     name: String,
     email: { type: String, unique: true },
-    createdAt: Date,
-    updateAt: Date,
+    processed: { type: Boolean, default: false },
+    accessToken: String,
+    accessTokenExpires: Date,
+    createdAt: { type: Date, default: Date.now },
+    updateAt: { type: Date, default: Date.now },
   });
   UserSchema.plugin(findOrCreate);
   const UserModel = mongoose.model('User', UserSchema);
